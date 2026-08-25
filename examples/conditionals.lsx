@@ -1,0 +1,38 @@
+export default function hi(x) {
+    return <div>
+        if (x == 1) {
+            <h1>"x is 1"</h1>
+        } else {
+            <h1>"x is not 1"</h1>
+        }
+    </div>
+}
+
+//compiles into:
+/*
+import { createRoot, createMemo, createEffect } from "@solidjs/signals";
+
+export default function hi(xSignal) {
+  return createRoot(() => {
+    const container = document.createElement('div');
+    const content = createMemo(() => {
+      if (xSignal() === 1) {
+        const el = document.createElement('h1');
+        el.textContent = "x is 1";
+        return el;
+      } else {
+        const el = document.createElement('h1');
+        el.textContent = "x is not 1";
+        return el;
+      }
+    });
+
+    createEffect(() => {
+      const newChild = content();
+      container.replaceChildren(newChild);
+    });
+
+    return container;
+  });
+}
+*/

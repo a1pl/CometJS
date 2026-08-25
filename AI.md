@@ -1,0 +1,1 @@
+Please do not use AI for this project
