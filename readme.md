@@ -49,7 +49,7 @@ In liquidjs `#state` compiles to `@solidjs/signals` for fine‑grained reactivit
 ### Customization
 liquidjs's configuration file is (planned to be) very customizable, with almost every feature created/planned being able to be customized
 
-Old tsrx.dev style jsx elements (<div>"string here" + variable</div>) can also be swapped out for more standard jsx elements with {} used for evals and unquoted string literals being legal.
+Old tsrx.dev style jsx elements (<div>"string here" + variable</div>) can also be swapped out for more standard jsx elements with {} used for evals and unquoted string literals being legal. this This might be more painfful than I think and might be swapped.
 
 ---
 
