@@ -74,6 +74,7 @@ Because of the wrapper divs, CSS is applied **programatically** at element creat
 - [acorn-jsx](https://github.com/acornjs/acorn-jsx) - JSX support for Acorn, used by our acorn plugin
 - [gogocode](https://github.com/thx/gogocode) - used for modifying Acorn output for lsx
 - [@solidjs/signals](https://www.npmjs.com/package/@solidjs/signals) - reactivity engine
+- [livelist](https://www.npmjs.com/package/live-list) - fast linked list with live iterator
 
 ---
 
