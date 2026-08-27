@@ -1,5 +1,5 @@
 import { Ulid } from 'id128';
-import { list} from "live-list"
+import { list } from "live-list"
 
 
 var tree = new List();
@@ -12,6 +12,7 @@ export function createWrapper(parent = document.body) {
     tree.push(x)
     return x;
 }
+
 export function removeWrapper(id) {
     const wrapper = document.getElementById(`x-${id}`);
     if (wrapper) wrapper.remove();
