@@ -1,5 +1,8 @@
 
 # cometjs
+---
+yo whoever made acorn needs to BURN
+---
 
 An experimental JavaScript framework, inspired by old [tsrx](https://tsrx.dev) and Svelte syntax, while using @solidjs/signals for state.
 
@@ -72,7 +75,7 @@ Because of the wrapper divs, CSS is applied **programatically** at element creat
 - [acorn](https://github.com/acornjs/acorn) - JavaScript parser
 - [acorn-typescript](https://github.com/sveltejs/acorn-typescript) - TypeScript support for Acorn
 - [acorn-jsx](https://github.com/acornjs/acorn-jsx) - JSX support for Acorn, used by our acorn plugin
-- [gogocode](https://github.com/thx/gogocode) - used for modifying Acorn output for lsx
+- [gogocode](https://github.com/thx/gogocode) - used for modifying Acorn output for csx (soon)
 - [@solidjs/signals](https://www.npmjs.com/package/@solidjs/signals) - reactivity engine
 - [livelist](https://www.npmjs.com/package/live-list) - fast linked list with live iterator
 
@@ -80,7 +83,7 @@ Because of the wrapper divs, CSS is applied **programatically** at element creat
 
 ## Type Safety
 
-Type safety is **not enforced** by the framework. However, if TypeScript usage is detected inside a `.lsx` file, an attempt to preserve and emit type information for downstream tooling is made.
+Type safety is **not enforced** by the framework. However, if TypeScript usage is detected inside a `.csx` file, an attempt to preserve and emit type information for downstream tooling is made.
 
 ---
 

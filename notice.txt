@@ -1,0 +1,1 @@
+i wish there was a javascript parser that instead of using bullshit undocumented 'features' like acorn just used a form of regexs and patterns programatically applied to js
