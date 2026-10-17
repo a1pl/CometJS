@@ -1,58 +1,25 @@
 import { tokTypes as tt } from 'acorn';
 
-export default function ifWrapper(asd) {
+// elseif is alt JJSXIfStatement, plain else is JSXIfStatement with test true cuz im smart
+export default function ifWrapper(dis) {
     const node = dis.startNode();
-    dis.next()
-    // if (here) {}
-    dis.expect(tt.paranL)
-    const condition = dis.parseExpression();
+    dis.next(); // consume 'if'
+    dis.expect(tt.parenL);
+    node.test = dis.parseExpression();
     dis.expect(tt.parenR);
+    node.consequent = dis.parseCSXBlock();
+    node.alternate = dis.parseCSXElse();
+    return dis.finishNode(node, 'JSXIfStatement');
+}
 
-    // if () {here}
-    dis.expect(tt.braceL);
-    const consequent = [];
-    while (!dis.eat(tt.braceR)) {
-        consequent.push(dis.parseJSXChild(null));
-    }
-    
-    let alternate = null;
-    if (dis.type === tt._else) {
-        dis.next(); // consume 'else'
+export function elseWrapper(dis) {
+    dis.next();
 
-        // check for else if
-        if (dis.type === tt._if) {
-            // parse
-            const elseIfNode = dis.startNode();
-            dis.next(); // consume 'if'
-            dis.expect(tt.parenL);
-            const elseIfTest = dis.parseExpression();
-            dis.expect(tt.parenR);
-            
-            dis.expect(tt.braceL);
-            const elseIfBody = [];
-            while (!dis.eat(tt.braceR)) {
-                elseIfBody.push(dis.parseJSXChild(null));
-            }
-
-            alternate = dis.finishNode(elseIfNode, 'JSXIfStatement', {
-                test: elseIfTest,
-                consequent: elseIfBody,
-                alternate: null,
-            });
-        } else {
-            // treat as else if (true)
-            dis.expect(tt.braceL);
-            const elseBody = [];
-            while (!dis.eat(tt.braceR)) {
-                elseBody.push(dis.parseJSXChild(null));
-            }
-
-            const trueNode = dis.startNode();
-            alternate = dis.finishNode(trueNode, 'JSXIfStatement', {
-                test: { type: 'Literal', value: true },
-                consequent: elseBody,
-                alternate: null,
-            });
-        }
-    }
+    // else if
+    if (dis.type === tt._if) return ifWrapper(dis);
+    const node = dis.startNode();
+    node.test = { type: 'Literal', value: true, raw: 'true' };
+    node.consequent = dis.parseCSXBlock();
+    node.alternate = null;
+    return dis.finishNode(node, 'JSXIfStatement');
 }

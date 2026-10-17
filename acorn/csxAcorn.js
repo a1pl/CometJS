@@ -2,12 +2,15 @@ import { tokTypes as tt, tokContexts, TokContext, isNewLine } from 'acorn'
 import { Parser } from 'acorn';
 import jsx from 'acorn-jsx';
 import forWrapper from "./readers/forHandler.js"
-import ifWrapper from "./readers/ifHandler.js" // not actually a wrapper, just keeping it consistent
+import ifWrapper, { elseWrapper } from "./readers/ifHandler.js" // not actually a wrapper, just keeping it consistent
 
 const forMark = { csx: 'for' };
-// TODO add `if` here once ifHandler works (else needs handling too i forgot)
-const keywordMarks = { for: forMark };
-const keywordRe = /(for)\s*\(/y;
+const ifMark = { csx: 'if' };
+const elseMark = { csx: 'else' };
+const keywordMarks = { for: forMark, if: ifMark, else: elseMark };
+// w deepseek for the regex slop
+const keywordRe = /(for|if)\s*\(|(else)(?=\s*(?:\{|if\s*\())/y;
+const elseAheadRe = /else(?=\s*(?:\{|if\s*\())/y;
 
 export default function csxAcornPlugin(Parser) {
   const tok = Parser.acornJsx.tokTypes;
@@ -28,7 +31,8 @@ export default function csxAcornPlugin(Parser) {
                 const ch = this.input.charCodeAt(this.pos);
 
                 keywordRe.lastIndex = this.pos;
-                const kw = keywordRe.exec(this.input)?.[1];
+                const m = keywordRe.exec(this.input);
+                const kw = m && (m[1] ?? m[2]);
                 if (kw) {
                     if (this.pos === this.start) {
                         this.pos += kw.length;
@@ -85,7 +89,11 @@ export default function csxAcornPlugin(Parser) {
 
         // pick up acorn jsx markers
         parseExprAtom(refDestructuringErrors, forInit, forNew) {
-            if (this.type === tok.jsxText && this.value === forMark) return this.parseJSXForStatement();
+            if (this.type === tok.jsxText) {
+                if (this.value === forMark) return this.parseJSXForStatement();
+                if (this.value === ifMark) return this.parseJSXIfStatement();
+                if (this.value === elseMark) this.unexpected(); // else with no if, edgecase handling!!!!!!
+            }
             return super.parseExprAtom(refDestructuringErrors, forInit, forNew);
         }
 
@@ -122,12 +130,19 @@ export default function csxAcornPlugin(Parser) {
         }
 
         parseJSXIfStatement() {
-            const node = this.startNode();
-            this.next();
-            ifWrapper(this)
-            this.expect(tt.parenL);
-            const count =
-            this.expect(tt.parenR);
+            this.csx_enterHead();
+            return ifWrapper(this);
+        }
+
+        parseCSXElse() {
+            // TODO:decide whether whitespace before else is text or not
+            if (this.type === tok.jsxText && typeof this.value === 'string' && !this.value.trim()) {
+                elseAheadRe.lastIndex = this.end;
+                if (elseAheadRe.test(this.input)) this.next();
+            }
+            if (this.type !== tok.jsxText || this.value !== elseMark) return null;
+            this.csx_enterHead();
+            return elseWrapper(this);
         }
   };
 }
